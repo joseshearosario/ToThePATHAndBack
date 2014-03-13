@@ -10,11 +10,33 @@ import java.util.HashMap;
 import java.util.List;
 import org.json.JSONObject;
 import android.os.AsyncTask;
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 
 public class Directions {
-	private final static String API_KEY = "AIzaSyCvgz5H4JZycSSQ8YYQwmONvqwce9JZEwg";
+	private final static String API_KEY = "API_KEY";
 	private final static String OUTPUT = "json";
+	
+	public static class DownloadAllData extends AsyncTask<String[], Void, String[]> 
+	{
+		@Override
+		protected String[] doInBackground(String[]... params) {
+			String[] tempArray = params[0];
+			String[] data = new String[tempArray.length];
+			for (int i = 0; i < tempArray.length; i++)
+			{
+				try {
+					data[i] = downloadFromURL(tempArray[i]);
+					Log.d("data", data[i]);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			return data;
+		}
+	}
 	
 	// Starts fetching/downloading JSON data from URL passed
 	// Called in the main activity
@@ -74,12 +96,12 @@ public class Directions {
 	{
 		String str_origin = "origin="+origin.latitude+","+origin.longitude;
 		String str_destination = "destination="+destination.latitude+","+destination.longitude;
-		String sensor = "sensor=false";
+		String sensor = "sensor=true";
 		
-		String parameters = str_origin+"&"+str_destination+"&"+sensor
-				+"&key="+API_KEY;;
+		String parameters = str_origin+"&"+str_destination+"&"+sensor;
+				//+"&key="+API_KEY;
 		
-		String url = "https://maps.googleapis.com/maps/api/directions/"+OUTPUT+"?"+parameters;
+		String url = "http://maps.googleapis.com/maps/api/directions/"+OUTPUT+"?"+parameters;
 		return url;
 	}
 	
@@ -136,22 +158,18 @@ public class Directions {
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			Log.d("url", "url download fail");
 			e.printStackTrace();
 		}
 		
 		return data;
 	}
 
-	public static String[] getAllJSONdata (LatLng origin, Station[] stations)
+	public static String[] getAllURLS (LatLng origin, Station[] stations)
 	{
-		String[] allJSONs = new String[stations.length];
-
+		String[] allURLs = new String [stations.length];
 		for (int i = 0; i < stations.length; i++)
-		{
-			String url = Directions.getUrl(origin, stations[i].getStationLocation());	
-			allJSONs[i] = downloadFromURL(url);
-		}
-		
-		return allJSONs;
+			allURLs[i] = Directions.getUrl(origin, stations[i].getStationLocation());
+		return allURLs;
 	}
 }

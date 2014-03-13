@@ -4,19 +4,26 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.shea.tothepathandback.Directions.DownloadAllData;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
 
-public class MainActivity extends Activity {
-	DatabaseHandler pathStations;
+public class MainActivity extends Activity{
+	public DatabaseHandler pathStations;
+	public static LatLng currentLocation = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		// get current location
+		new userLocation(this);
 		
 		// Create database
 		pathStations = new DatabaseHandler(this);
@@ -32,35 +39,38 @@ public class MainActivity extends Activity {
 		
 		// Get all entrances from each station
 		for (int i = 0; i < allStations.length; i++)
-		{
 			allStations[i].setEntranceList(pathStations);
-			Station s = allStations[i];
-			String log = "ID:"+s.getStationID()+", Name:" + s.getStationName()+", City:" + s.getStationCity()+
-				", State: " + s.getStationState() + " " + s.getLatitude() + "," + s.getLongitude();
-			Log.d("Station", log);
-			
-			Entrance[] allEntrances = s.getEntranceList();
-			for (int j = 0; j < allEntrances.length; j++)
-			{
-				Entrance e = allEntrances[j];
-				String log1 = "ID:"+e.getEntranceid()+", StationID:"+e.getStationid()+", Station:"+e.getStationName()+
-						", Notes:"+e.getEntranceNotes()+", "+e.getLatitude()+","+e.getLongitude()+
-						", Elevator:"+e.isElevator()+ ", Escalator:"+e.isElevator()+", NYBOUND:"+e.isNybound()+", NJBOUND:"+e.isNjbound();
-				Log.d("Entrance",log1);
-			}
+		
+		// create all the URLs
+		String [] allJSONURLs = Directions.getAllURLS(currentLocation, allStations);
+		for (int i = 0; i < allJSONURLs.length; i++)
+			Log.d("allJSONURLs", allJSONURLs[i]);
+		
+		// Get direction data from current location (null) to each station from URLs
+		DownloadAllData downloadAllData = new DownloadAllData();
+		downloadAllData.execute(allJSONURLs);
+		String[] allJSONdata = null;
+		try {
+			allJSONdata = downloadAllData.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
-		// Get current location of the user
-		
-		
-		// Get direction data from current location (null) to each station
-		String[] allJSONdata = Directions.getAllJSONdata(null, allStations);
-		
-		// get the distance and duration from current location to each station using the downloaded JSON data
-		DirectionsJSONParser dp = new DirectionsJSONParser();
-		int[] allJSONdistances = dp.getDistance(allJSONdata);
-		int[] allJSONdurations = dp.getDuration(allJSONdata);
-		
+		// Obtain each of the station's distance and duration from the user
+		int[] allJSONdistances = null;
+		int[] allJSONdurations = null;
+		try {
+			allJSONdistances = DirectionsJSONParser.getDistance(allJSONdata);
+			allJSONdurations = DirectionsJSONParser.getDuration(allJSONdata);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		// sort the stations
 		List<StationSortObject> allStationsSortDistance = new ArrayList<StationSortObject>();
 		List<StationSortObject> allStationsSortDuration = new ArrayList<StationSortObject>();
@@ -78,9 +88,8 @@ public class MainActivity extends Activity {
 			allStationsSortDistance.remove(i);
 			allStationsSortDuration.remove(i);
 		}
-		
-		
 	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

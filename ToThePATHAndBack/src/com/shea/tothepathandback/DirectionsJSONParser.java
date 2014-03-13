@@ -11,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -19,7 +21,7 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public class DirectionsJSONParser {
 	
-	public int[] getDistance (String[] JSONString)
+	public static int[] getDistance (String[] JSONString)
 	{
 		JSONArray jRoutes = null;
 		JSONArray jLegs = null;
@@ -50,7 +52,7 @@ public class DirectionsJSONParser {
 		return distance;
 	}
 	
-	public int[] getDuration (String[] JSONString)
+	public static int[] getDuration (String[] JSONString)
 	{
 		JSONArray jRoutes = null;
 		JSONArray jLegs = null;
