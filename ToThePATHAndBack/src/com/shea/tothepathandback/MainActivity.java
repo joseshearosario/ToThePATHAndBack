@@ -14,7 +14,9 @@ import android.util.Log;
 import android.view.Menu;
 
 public class MainActivity extends Activity{
+	// The main database, where all information will initially be held
 	public DatabaseHandler pathStations;
+	// Static LatLng variable updated periodically in the userLocation class
 	public static LatLng currentLocation = null;
 	
 	@Override
@@ -32,7 +34,7 @@ public class MainActivity extends Activity{
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			Log.d("Database", "Database was not created/opened");
-		}
+		} 
 		
 		// Get all stations from database
 		Station[] allStations = pathStations.getAllStations();
@@ -71,7 +73,10 @@ public class MainActivity extends Activity{
 			e.printStackTrace();
 		}
 
-		// sort the stations
+		// sort the stations utilizing the StationSortObject class, where it will hold
+		// the station and the distance/duration. Done in this matter because I have not found a 
+		// cleaner way to sort the distance/duration while maintaining a connection to the station 
+		// they're associated with.
 		List<StationSortObject> allStationsSortDistance = new ArrayList<StationSortObject>();
 		List<StationSortObject> allStationsSortDuration = new ArrayList<StationSortObject>();
 		for (int i = 0; i < allStations.length; i++)
@@ -97,11 +102,25 @@ public class MainActivity extends Activity{
 		return true;
 	}
 	
+	/**
+	 * <p>An object that each hold a station and the distance or duration from the current 
+	 * location of the user. The purpose for this class is to associate the station with one 
+	 * of those metrics in order to sort through all the stations and to find which is shorter or 
+	 * takes less time to arrive at. Only has get methods, and overridden sort method for two 
+	 * of these objects.  
+	 * 
+	 */
 	public class StationSortObject implements Comparable<StationSortObject>
 	{
 		public Station station = null;
 		public int sortMeasure;
 		
+		/**
+		 * Contructor for StationSortObject
+		 * 
+		 * @param s - the station in question 
+		 * @param d - the distance or duration from the current location to the station
+		 */
 		public StationSortObject (Station s, int d)
 		{
 			station = s;
@@ -109,6 +128,8 @@ public class MainActivity extends Activity{
 		}
 
 		/**
+		 * Whether it is the duration or distance, it will return the integer value of it
+		 * 
 		 * @return the sortMeasure
 		 */
 		public int getSortMeasure() {
@@ -122,6 +143,12 @@ public class MainActivity extends Activity{
 			return station;
 		}
 
+		/**
+		 * Compares the sort value of this and the passed StationSortObject by returning 
+		 * the difference between the two. This will sort in ascending order.
+		 * 
+		 * @return 
+		 */
 		@Override
 		public int compareTo(StationSortObject arg0) {
 			int compareMeasure = ((StationSortObject) arg0).getSortMeasure();

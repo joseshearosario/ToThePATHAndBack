@@ -20,6 +20,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+/**
+ * Handles all the necessary steps to create, open, update, and save the databases necessary for 
+ * this project. It will open a database file already available in the project's assets folder, and 
+ * will save that file as well in to the app's data folder on the device. The necessary queries to 
+ * obtain the stations and their entrances are also available as methods here.  
+ * 
+ * @author shea
+ */
 public class DatabaseHandler extends SQLiteOpenHelper {
 
 	private static String DATABASE_NAME = "pathStations";
@@ -32,6 +40,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	private final Context c;
 	private String databasePath;
 	
+	/**
+	 * Constructor for our database handler. Saves copy of context from MainActivity and 
+	 * sets the save path for our database file. 
+	 * 
+	 * @param context - Context from MainActivity that'll be copied here 
+	 */
 	@SuppressLint("SdCardPath")
 	public DatabaseHandler(Context context)
 	{
@@ -40,6 +54,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		databasePath = "/data/data/" + context.getPackageName() + "/databases/";
 	}
 	
+	/**
+	 * If a database already exists, we'll check if the database has been updated based on the constant 
+	 * DATABASE_VERSION. If the database version has not changed, then the current database file will open. 
+	 * Else if the database version has changed, the saved file will be deleted. Finally, if the old database 
+	 * file was deleted or a database never existed, a new one will be saved based on what is read from the 
+	 * one stored in our assets folder. 
+	 * 
+	 * @see #checkDatabase()
+	 * @see #copyDatabase()
+	 * @see #openDatabase()
+	 * @throws IOException - Error copying database
+	 */
 	public void createDatabase() throws IOException 
 	{
 		if (checkDatabase())
@@ -68,12 +94,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		this.openDatabase();
 	}
 	
-	 private boolean checkDatabase() 
+	
+	/**
+	 * Using the database path created in the constructor, determine if database already exists on file.
+	 * 
+	 * @return
+	 */
+	private boolean checkDatabase() 
 	 {  
 		 File dbFile = new File(databasePath + DATABASE_NAME);  
 		 return dbFile.exists();
 	 }  
 	
+	
+	/**
+	 * Attempts to use a stream buffer to input database from asserts file, create 
+	 * the permanent file in the data folder stored on the user's device, and write 
+	 * from the buffer to the file. Will also save database version. 
+	 * 
+	 * @throws IOException if stream cannot be opened 
+	 */
 	@SuppressWarnings("resource")
 	private void copyDatabase() throws IOException
 	{
@@ -108,7 +148,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		myOutput.close();  
 		myInput.close();  
 	}
+
 	
+	/**
+	 * Create a complete path to database file in app's data folder on device and open it as 
+	 * read only. Saved in SQLiteDatabase field.  
+	 */
 	public void openDatabase()
 	{
 		String myPath = databasePath + DATABASE_NAME;
@@ -127,6 +172,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		
 	}
 	
+	/**
+	 * Queries the station table for the information associated with the given unique station ID
+	 * 
+	 * @param id - Unique station identification
+	 * @return Station object with same unique ID
+	 */
 	public Station getStation (String id)
 	{
 		String selectQuery = "SELECT * FROM " + StationEntry.TABLE_NAME + " WHERE " + StationEntry.COLUMN_STATIONID + " = ?";
@@ -140,6 +191,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return s;
 	}
 	
+	/**
+	 * Query the stations table for all stations, all rows.
+	 * 
+	 * @return Station array of all in stations table
+	 */
 	public Station[] getAllStations()
 	{
 		String selectQuery = "SELECT * FROM " + StationEntry.TABLE_NAME;
@@ -160,6 +216,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return stationList;
 	}
 	
+	/**
+	 * Query the entrances tables for all entrances that share their station ID with the unique ID 
+	 * of the passed station.
+	 * 
+	 * @param s - Station used for query
+	 * @return array of Entrances corresponding to the passed Station based on station ID
+	 */
 	public Entrance[] getAllEntrancesForStation (Station s)
 	{
 		String selectQuery = "SELECT * FROM " + EntranceEntry.TABLE_NAME + " WHERE " + EntranceEntry.COLUMN_STATIONID + " = ?";

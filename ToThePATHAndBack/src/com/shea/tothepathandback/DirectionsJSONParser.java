@@ -16,11 +16,20 @@ import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
+ * Parses any JSON data in order to obtain information so that a map can be drawn, or 
+ * to determine the nearest or quickest stations based on the user's location. 
+ * 
  * @author shea
- *
  */
 public class DirectionsJSONParser {
 	
+	/**
+	 * Passing an array of Strings holding the JSON data from the given origin to all stations, we parse 
+	 * through and obtain the distance from origin to destination in meters.
+	 * 
+	 * @param JSONString - Array of Strings holding JSON data
+	 * @return an array of integers in order of stations array representing their distance (m) from given origin
+	 */
 	public static int[] getDistance (String[] JSONString)
 	{
 		JSONArray jRoutes = null;
@@ -52,6 +61,13 @@ public class DirectionsJSONParser {
 		return distance;
 	}
 	
+	/**
+	 * Passing an array of Strings holding the JSON data from the given origin to all stations, we parse 
+	 * through and obtain the time duration from origin to destination in seconds.
+	 * 
+	 * @param JSONString - Array of Strings holding JSON data
+	 * @return an array of integers in order of stations array representing time duration (s) from given origin
+	 */
 	public static int[] getDuration (String[] JSONString)
 	{
 		JSONArray jRoutes = null;
