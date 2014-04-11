@@ -195,75 +195,93 @@ containing a value of this type.
         public static final int activity_vertical_margin=0x7f080001;
     }
     public static final class drawable {
-        public static final int common_signin_btn_icon_dark=0x7f020000;
-        public static final int common_signin_btn_icon_disabled_dark=0x7f020001;
-        public static final int common_signin_btn_icon_disabled_focus_dark=0x7f020002;
-        public static final int common_signin_btn_icon_disabled_focus_light=0x7f020003;
-        public static final int common_signin_btn_icon_disabled_light=0x7f020004;
-        public static final int common_signin_btn_icon_focus_dark=0x7f020005;
-        public static final int common_signin_btn_icon_focus_light=0x7f020006;
-        public static final int common_signin_btn_icon_light=0x7f020007;
-        public static final int common_signin_btn_icon_normal_dark=0x7f020008;
-        public static final int common_signin_btn_icon_normal_light=0x7f020009;
-        public static final int common_signin_btn_icon_pressed_dark=0x7f02000a;
-        public static final int common_signin_btn_icon_pressed_light=0x7f02000b;
-        public static final int common_signin_btn_text_dark=0x7f02000c;
-        public static final int common_signin_btn_text_disabled_dark=0x7f02000d;
-        public static final int common_signin_btn_text_disabled_focus_dark=0x7f02000e;
-        public static final int common_signin_btn_text_disabled_focus_light=0x7f02000f;
-        public static final int common_signin_btn_text_disabled_light=0x7f020010;
-        public static final int common_signin_btn_text_focus_dark=0x7f020011;
-        public static final int common_signin_btn_text_focus_light=0x7f020012;
-        public static final int common_signin_btn_text_light=0x7f020013;
-        public static final int common_signin_btn_text_normal_dark=0x7f020014;
-        public static final int common_signin_btn_text_normal_light=0x7f020015;
-        public static final int common_signin_btn_text_pressed_dark=0x7f020016;
-        public static final int common_signin_btn_text_pressed_light=0x7f020017;
-        public static final int ic_launcher=0x7f020018;
-        public static final int ic_plusone_medium_off_client=0x7f020019;
-        public static final int ic_plusone_small_off_client=0x7f02001a;
-        public static final int ic_plusone_standard_off_client=0x7f02001b;
-        public static final int ic_plusone_tall_off_client=0x7f02001c;
+        public static final int bonuspack_bubble=0x7f020000;
+        public static final int btn_moreinfo=0x7f020001;
+        public static final int common_signin_btn_icon_dark=0x7f020002;
+        public static final int common_signin_btn_icon_disabled_dark=0x7f020003;
+        public static final int common_signin_btn_icon_disabled_focus_dark=0x7f020004;
+        public static final int common_signin_btn_icon_disabled_focus_light=0x7f020005;
+        public static final int common_signin_btn_icon_disabled_light=0x7f020006;
+        public static final int common_signin_btn_icon_focus_dark=0x7f020007;
+        public static final int common_signin_btn_icon_focus_light=0x7f020008;
+        public static final int common_signin_btn_icon_light=0x7f020009;
+        public static final int common_signin_btn_icon_normal_dark=0x7f02000a;
+        public static final int common_signin_btn_icon_normal_light=0x7f02000b;
+        public static final int common_signin_btn_icon_pressed_dark=0x7f02000c;
+        public static final int common_signin_btn_icon_pressed_light=0x7f02000d;
+        public static final int common_signin_btn_text_dark=0x7f02000e;
+        public static final int common_signin_btn_text_disabled_dark=0x7f02000f;
+        public static final int common_signin_btn_text_disabled_focus_dark=0x7f020010;
+        public static final int common_signin_btn_text_disabled_focus_light=0x7f020011;
+        public static final int common_signin_btn_text_disabled_light=0x7f020012;
+        public static final int common_signin_btn_text_focus_dark=0x7f020013;
+        public static final int common_signin_btn_text_focus_light=0x7f020014;
+        public static final int common_signin_btn_text_light=0x7f020015;
+        public static final int common_signin_btn_text_normal_dark=0x7f020016;
+        public static final int common_signin_btn_text_normal_light=0x7f020017;
+        public static final int common_signin_btn_text_pressed_dark=0x7f020018;
+        public static final int common_signin_btn_text_pressed_light=0x7f020019;
+        public static final int ic_launcher=0x7f02001a;
+        public static final int ic_plusone_medium_off_client=0x7f02001b;
+        public static final int ic_plusone_small_off_client=0x7f02001c;
+        public static final int ic_plusone_standard_off_client=0x7f02001d;
+        public static final int ic_plusone_tall_off_client=0x7f02001e;
+        public static final int marker_node=0x7f02001f;
+        public static final int moreinfo_arrow=0x7f020020;
+        public static final int moreinfo_arrow_pressed=0x7f020021;
     }
     public static final class id {
         public static final int ClosestStationsActivity=0x7f050005;
-        public static final int ClosestStationsList=0x7f050008;
-        public static final int action_settings=0x7f050018;
+        public static final int ClosestStationsList=0x7f050006;
+        public static final int action_settings=0x7f050024;
+        public static final int bubble_description=0x7f050020;
+        public static final int bubble_image=0x7f05001d;
+        public static final int bubble_moreinfo=0x7f05001f;
+        public static final int bubble_subdescription=0x7f050021;
+        public static final int bubble_title=0x7f05001e;
+        public static final int button_destination=0x7f050008;
+        public static final int container=0x7f050009;
+        public static final int directionsView=0x7f05000a;
         public static final int hybrid=0x7f050004;
+        public static final int mapview=0x7f050007;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
-        public static final int origin_current=0x7f05000a;
-        public static final int origin_manual=0x7f050009;
-        public static final int radioGroup_DistanceDuration=0x7f050013;
-        public static final int radioGroup_TransportMode=0x7f05000c;
-        public static final int radio_Bicycle=0x7f050011;
-        public static final int radio_Distance=0x7f050014;
-        public static final int radio_Duration=0x7f050015;
-        public static final int radio_PublicTransit=0x7f050010;
-        public static final int radio_Quickest=0x7f05000d;
-        public static final int radio_Shortest=0x7f05000e;
-        public static final int radio_Walking=0x7f05000f;
+        public static final int origin_current=0x7f05000d;
+        public static final int origin_manual=0x7f05000b;
+        public static final int radioGroup_DistanceDuration=0x7f050016;
+        public static final int radioGroup_HandicapAccess=0x7f05001a;
+        public static final int radioGroup_TransportMode=0x7f05000f;
+        public static final int radio_Bicycle=0x7f050014;
+        public static final int radio_Distance=0x7f050017;
+        public static final int radio_Duration=0x7f050018;
+        public static final int radio_Elevator=0x7f05001c;
+        public static final int radio_Escalator=0x7f05001b;
+        public static final int radio_PublicTransit=0x7f050013;
+        public static final int radio_Quickest=0x7f050010;
+        public static final int radio_Shortest=0x7f050011;
+        public static final int radio_Walking=0x7f050012;
         public static final int satellite=0x7f050002;
-        public static final int sortMeasure=0x7f050017;
-        public static final int stationName=0x7f050016;
+        public static final int sortMeasure=0x7f050023;
+        public static final int stationName=0x7f050022;
         public static final int terrain=0x7f050003;
-        public static final int test_TransportMode=0x7f05000b;
-        public static final int text_DistanceDuration=0x7f050012;
-        public static final int text_confirmSort=0x7f050007;
-        public static final int text_confirmTransport=0x7f050006;
+        public static final int text_DistanceDuration=0x7f050015;
+        public static final int text_HandicapAccess=0x7f050019;
+        public static final int text_TransportMode=0x7f05000e;
+        public static final int text_or=0x7f05000c;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f070000;
     }
     public static final class layout {
         public static final int activity_closest_stations=0x7f030000;
-        public static final int activity_main=0x7f030001;
-        public static final int fragment_closest_stations=0x7f030002;
-        public static final int listitem=0x7f030003;
+        public static final int activity_display_directions=0x7f030001;
+        public static final int activity_main=0x7f030002;
+        public static final int bonuspack_bubble=0x7f030003;
+        public static final int listitem=0x7f030004;
     }
     public static final class menu {
         public static final int closest_stations=0x7f0a0000;
-        public static final int get_closest_stations=0x7f0a0001;
+        public static final int display_directions=0x7f0a0001;
         public static final int main=0x7f0a0002;
     }
     public static final class string {
@@ -292,6 +310,7 @@ containing a value of this type.
         [CHAR LIMIT=70] 
          */
         public static final int auth_client_using_bad_version_title=0x7f060014;
+        public static final int button_destination=0x7f060029;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -363,18 +382,24 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f060013;
+        public static final int hello_world=0x7f06002b;
         public static final int origin_current=0x7f06001d;
         public static final int origin_manual=0x7f06001c;
-        public static final int radio_Bicycle=0x7f060024;
-        public static final int radio_Distance=0x7f060026;
-        public static final int radio_Duration=0x7f060027;
-        public static final int radio_PublicTransit=0x7f060023;
-        public static final int radio_Quickest=0x7f060020;
-        public static final int radio_Shortest=0x7f060021;
-        public static final int radio_Walking=0x7f060022;
-        public static final int text_DistanceDuration=0x7f060025;
-        public static final int text_TransportMode=0x7f06001f;
-        public static final int title_activity_closest_stations=0x7f06001e;
+        public static final int radio_Bicycle=0x7f060023;
+        public static final int radio_Distance=0x7f060025;
+        public static final int radio_Duration=0x7f060026;
+        public static final int radio_Elevator=0x7f06002e;
+        public static final int radio_Escalator=0x7f06002d;
+        public static final int radio_PublicTransit=0x7f060022;
+        public static final int radio_Quickest=0x7f06001f;
+        public static final int radio_Shortest=0x7f060020;
+        public static final int radio_Walking=0x7f060021;
+        public static final int text_DistanceDuration=0x7f060024;
+        public static final int text_HandicapAccess=0x7f06002c;
+        public static final int text_TransportMode=0x7f06001e;
+        public static final int text_or=0x7f060027;
+        public static final int title_activity_closest_stations=0x7f060028;
+        public static final int title_activity_display_directions=0x7f06002a;
     }
     public static final class style {
         /** 

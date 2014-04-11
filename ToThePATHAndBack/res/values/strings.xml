@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">To The PATH And Back</string>
+    <string name="app_name" translatable="false">To The PATH And Back</string>
     <string name="action_settings">Settings</string>
     <string name="origin_manual">Type starting point&#8230;</string>
-    <string name="origin_current">Use your current location</string>
-    <string name="title_activity_closest_stations">Your Closest Stations</string>
-    
-    <string name="text_TransportMode">Transport Mode</string>
+    <string name="origin_current">Getting your current location&#8230;</string>
+    <string name="text_TransportMode">Transport Mode:</string>
     <string name="radio_Quickest">Quickest (Driving)</string>
     <string name="radio_Shortest">Shortest (Driving)</string>
     <string name="radio_Walking">Walking</string>
     <string name="radio_PublicTransit">Public Transit</string>
     <string name="radio_Bicycle">Bicycle</string>
-    
     <string name="text_DistanceDuration">Sort By:</string>
     <string name="radio_Distance">Distance (km)</string>
-    <string name="radio_Duration">Duratioin (seconds)</string>
-
+    <string name="radio_Duration">Duration</string>
+    <string name="text_or">- Or -</string>
+    <string name="title_activity_closest_stations">Your Closest Stations</string>
+    <string name="button_destination">Select a station above&#8230;</string>
+    <string name="title_activity_display_directions">DisplayDirectionsActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="text_HandicapAccess">Handicap Access:</string>
+    <string name="radio_Escalator">Escalator</string>
+    <string name="radio_Elevator">Elevator</string>
+    
 </resources>

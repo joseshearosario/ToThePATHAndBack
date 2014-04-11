@@ -5,13 +5,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
+import java.util.ArrayList;
 import com.shearosario.tothepathandback.Entrance;
 import com.shearosario.tothepathandback.Station;
 import com.shearosario.tothepathandback.DatabaseContract.EntranceEntry;
 import com.shearosario.tothepathandback.DatabaseContract.StationEntry;
-
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -21,36 +19,42 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 /**
- * Handles all the necessary steps to create, open, update, and save the databases necessary for 
- * this project. It will open a database file already available in the project's assets folder, and 
+ * Handles all the necessary steps to create, open, update, and save the databases.
+ * It will open a database file already available in the project's assets folder, and 
  * will save that file as well in to the app's data folder on the device. The necessary queries to 
- * obtain the stations and their entrances are also available as methods here.  
+ * obtain the stations and their entrances are available as methods here.  
  * 
  * @author shea
  */
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-	private static String DATABASE_NAME = "pathStations";
+	private static final String DATABASE_NAME = "pathStations";
 	// When updating database, make sure to increment/change DATABASE_VERSION
 	// Default is 1, last used was 2
 	// http://stackoverflow.com/questions/11601573/db-file-in-assets-folder-will-it-be-updated
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	private static final String KEY_DB_VER = "db_ver";
 	private SQLiteDatabase db;
-	private final Context c;
+	private Context c;
 	private String databasePath;
 	
 	/**
 	 * Constructor for our database handler. Saves copy of context from MainActivity and 
 	 * sets the save path for our database file. 
 	 * 
-	 * @param context - Context from MainActivity that'll be copied here 
+	 * @param context Context that'll be used here 
 	 */
 	public DatabaseHandler(Context context)
 	{
 		super (context, DATABASE_NAME, null, DATABASE_VERSION);
-		this.c = context;
-		databasePath = "/data/data/" + c.getPackageName() + "/databases/";
+		c = context;
+		databasePath = c.getFilesDir().getParentFile().getPath() + "/databases/";
+		try {
+			createDatabase();
+		} catch (IOException e) {
+			Log.d("Database", "Database: Not created/opened");
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -69,7 +73,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	{
 		if (checkDatabase())
 		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c); // getPreferences(c)?
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
 			int dbVersion = prefs.getInt(KEY_DB_VER, 1);
 			if (DATABASE_VERSION != dbVersion)
 			{
@@ -97,7 +101,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	/**
 	 * Using the database path created in the constructor, determine if database already exists on file.
 	 * 
-	 * @return
+	 * @return true if exists
 	 */
 	private boolean checkDatabase() 
 	 {  
@@ -111,9 +115,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	 * the permanent file in the data folder stored on the user's device, and write 
 	 * from the buffer to the file. Will also save database version. 
 	 * 
-	 * @throws IOException if stream cannot be opened 
+	 * @throws IOException - stream cannot be opened 
 	 */
-	@SuppressWarnings("resource")
 	private void copyDatabase() throws IOException
 	{
 		InputStream myInput = c.getAssets().open(DATABASE_NAME);  
@@ -123,29 +126,33 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		int length;  
 		
 		File file = new File(databasePath);
+		boolean dirExist = true;
 		if (!file.exists())
 		{
 			if (!file.mkdir())
 			{
 				Log.d("Database Path","Unable to create database directory");
-				return;
+				dirExist = false;
 			}
 		}
 		
-		while ((length = myInput.read(buffer)) > 0) 
-		{  
-			myOutput.write(buffer, 0, length);  
-		}  
+		if (dirExist)
+		{
+			while ((length = myInput.read(buffer)) > 0) 
+			{  
+				myOutput.write(buffer, 0, length);  
+			}  
 		  
-		myOutput.flush();  
+			myOutput.flush();  
 		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putInt(KEY_DB_VER, DATABASE_VERSION);
-		editor.commit();
-		
-		myOutput.close();  
-		myInput.close();  
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putInt(KEY_DB_VER, DATABASE_VERSION);
+			editor.commit();
+			
+			myOutput.close();  
+			myInput.close();
+		}
 	}
 
 	
@@ -153,18 +160,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	 * Create a complete path to database file in app's data folder on device and open it as 
 	 * read only. Saved in SQLiteDatabase field.  
 	 */
-	public void openDatabase()
+	private void openDatabase()
 	{
 		String myPath = databasePath + DATABASE_NAME;
 		db = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
 	}
 
+	/**
+	 * @see android.database.sqlite.SQLiteOpenHelper#onCreate(android.database.sqlite.SQLiteDatabase)
+	 */
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/**
+	 * @see android.database.sqlite.SQLiteOpenHelper#onUpgrade(android.database.sqlite.SQLiteDatabase, int, int)
+	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// TODO Auto-generated method stub
@@ -174,7 +187,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	/**
 	 * Queries the station table for the information associated with the given unique station ID
 	 * 
-	 * @param id - Unique station identification
+	 * @param id Unique station identification
 	 * @return Station object with same unique ID
 	 */
 	public Station getStation (String id)
@@ -193,13 +206,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	/**
 	 * Query the stations table for all stations, all rows.
 	 * 
-	 * @return Station array of all in stations table
+	 * @return all stations in table in a Station ArrayList
 	 */
-	public Station[] getAllStations()
+	public ArrayList<Station> getAllStations()
 	{
 		String selectQuery = "SELECT * FROM " + StationEntry.TABLE_NAME;
 		Cursor c = db.rawQuery(selectQuery, null);
-		Station[] stationList = new Station[c.getCount()];		
+		ArrayList<Station> stationList = new ArrayList<Station>(c.getCount());		
 		
 		if (c.moveToFirst())
 		{
@@ -207,7 +220,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			do
 			{
 				Station s = new Station(c.getString(1),c.getString(2),c.getString(5),c.getString(6),c.getDouble(3),c.getDouble(4));
-				stationList[i] = s;
+				stationList.add(s);
 				i++;
 			} while (c.moveToNext() && i < c.getCount());
 		}
@@ -219,14 +232,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	 * Query the entrances tables for all entrances that share their station ID with the unique ID 
 	 * of the passed station.
 	 * 
-	 * @param s - Station used for query
-	 * @return array of Entrances corresponding to the passed Station based on station ID
+	 * @param s Station used for query
+	 * @return ArrayList of Entrance objects
 	 */
-	public Entrance[] getAllEntrancesForStation (Station s)
+	public ArrayList<Entrance> getAllEntrancesForStation (Station s)
 	{
 		String selectQuery = "SELECT * FROM " + EntranceEntry.TABLE_NAME + " WHERE " + EntranceEntry.COLUMN_STATIONID + " = ?";
 		Cursor c = db.rawQuery(selectQuery, new String[] {s.getStationID()});
-		Entrance[] entranceList = new Entrance[c.getCount()];
+		ArrayList<Entrance> entranceList = new ArrayList<Entrance>(c.getCount());
 
 		if (c.moveToFirst())
 		{
@@ -235,7 +248,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			{
 				Entrance e = new Entrance (c.getString(0), c.getString(1), c.getString(2), c.getString(5), c.getInt(6),
 						c.getInt(7), c.getInt(8), c.getInt(9), c.getDouble(3), c.getDouble(4));
-				entranceList[i] = e;
+				entranceList.add(e);
 				i++;
 			} while (c.moveToNext() && i < c.getCount());
 		}

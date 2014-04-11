@@ -7,4 +7,6 @@ In this repository, are the source files for a new Android application. The plan
 
 You will need to have a Mapquest app key in order to query the APIs. For obvious reasons, I won't be providing mine in the source code. You also need to download and import the Google Play Services library. This application will not function properly without those two requirements fulfilled.
 
-The code is a bit sloppy, and needs more comments including more JavaDoc comments. As I get closer and closer to something I feel comfortable releasing as a final application on the Play Store, I will correct this and properly comment all the codes.
+About half of my code is commented for human eyes. By my next committ I can confidently say that all of my code will have readable comments, as well as anything written after that.
+
+I'd like to give credit to the creators of OSMDroid (https://code.google.com/p/osmdroid/) and OSMBonusPack (https://code.google.com/p/osmbonuspack/)! Without making their jar files public I'd wouldn't be able to include a map in my application, and be able to display directions on that map for the user to follow to the destination. Awesome work, thanks!

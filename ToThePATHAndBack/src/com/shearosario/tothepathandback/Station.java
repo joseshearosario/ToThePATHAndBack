@@ -1,37 +1,42 @@
 package com.shearosario.tothepathandback;
 
-import com.google.android.gms.maps.model.LatLng;
+import java.util.ArrayList;
+import android.os.Parcel;
+import android.os.Parcelable;
 import com.shearosario.tothepathandback.DatabaseHandler;
 import com.shearosario.tothepathandback.Entrance;
 
 /**
  * @author shea
- *
- * Representation of a station in the PATH system. 
- * Included is the station name, unique ID, city and state, and it's latitude and longitude. 
- * The location given in the station is not an entrance, but rather the given location reported by
- * the Port Authority and Google Maps.
- * In addition to its defining characteristics, each station includes a Entrance array holding all 
- * the entrances to that station. These entrances are obtained from an imported database.  
+ * 
+ *         A class representing a station in the PATH system.
+ *         <p>
+ *         Included in each station is its name, unique ID, city and state, and
+ *         its latitude and longitude. The location given in the station is not
+ *         an entrance, but rather the given location reported by the Port
+ *         Authority and Google Maps. In addition, each station includes a
+ *         Entrance ArrayList holding all the entrances to that station. These
+ *         entrances are obtained from an imported database.
  */
-public class Station
+public class Station implements Parcelable
 {
 	/**
-	 * public variables for Station class
+	 * private variables for Station class
 	 */
-	public String stationID, stationName, stationCity, stationState;
-	public LatLng stationLocation;
-	public Entrance[] entranceList;
+	private String stationID, stationName, stationCity, stationState;
+	private double station_lat, station_lon;
+	private ArrayList<Entrance> entranceList;
+	private ArrayList<Entrance> handicapAccessEntrances;
 	
 	/**
-	 * Constructor for Station class
+	 * Constructor for Station
 	 * 
-	 * @param id - the unique identification for that station
-	 * @param name - the name of the station
-	 * @param city - the town/city where the station is located
-	 * @param state - the state where the station is located
-	 * @param lat - the latitude of the station
-	 * @param lon - the longitude of the station
+	 * @param id unique identification number for station
+	 * @param name official name of station
+	 * @param city town/city where the station is located
+	 * @param state state where the station is located
+	 * @param lat latitude of the station
+	 * @param lon longitude of the station
 	 */
 	public Station (String id, String name, String city, String state, double lat, double lon)
 	{
@@ -39,25 +44,48 @@ public class Station
 		stationName = name;
 		stationCity = city;
 		stationState = state;
-		stationLocation = new LatLng(lat,lon);
+		station_lat = lat;
+		station_lon = lon;
 	}
 	
 	/**
-	 * Obtains all the entrances for this station from the passed database
-	 * Called in MainActivity
+	 * Constructor for a parcelable Station
+	 * <p>
+	 * Creates a Station object in the same order as writeToParcel
 	 * 
-	 * @param db - A database containing all stations and entrances
-	 * @see com.shearosario.tothepathandback.DatabaseHandler 
+	 * @see #writeToParcel(Parcel, int)
+	 * @param source Parcel argument
 	 */
-	public void setEntranceList (DatabaseHandler db)
-	{
-		entranceList = db.getAllEntrancesForStation(this);
+	public Station(Parcel source) {
+		this.stationID = source.readString();
+		this.stationName = source.readString();
+		this.stationCity = source.readString();
+		this.stationState = source.readString();
+		this.station_lat = source.readDouble();
+		this.station_lon = source.readDouble();
+		this.entranceList = new ArrayList<Entrance>();
+		source.readTypedList(entranceList, Entrance.CREATOR);
+		this.handicapAccessEntrances = new ArrayList<Entrance>();
+		source.readTypedList(handicapAccessEntrances, Entrance.CREATOR);
 	}
 
 	/**
-	 * Returns the stationID associated with this station
+	 * Obtains all the entrances for this station from the passed database, and then creates 
+	 * a separate ArrayList of handicap accessible entrances.
 	 * 
-	 * @return the stationID
+	 * @param db A database containing all stations and entrances
+	 * @see DatabaseHandler#getAllEntrancesForStation(Station)
+	 */	
+	public void setEntranceList (DatabaseHandler db)
+	{
+		entranceList = db.getAllEntrancesForStation(this);
+		setHandicapAccessible();
+	}
+
+	/**
+	 * Returns the unique identification number for this station
+	 * 
+	 * @return stationID 
 	 */
 	public String getStationID() 
 	{
@@ -67,7 +95,7 @@ public class Station
 	/**
 	 * Returns the full name of this station
 	 * 
-	 * @return the stationName
+	 * @return stationName
 	 */
 	public String getStationName() 
 	{
@@ -77,7 +105,7 @@ public class Station
 	/**
 	 * Returns the name of the town/city where this station is located
 	 * 
-	 * @return the stationCity
+	 * @return stationCity
 	 */
 	public String getStationCity() 
 	{
@@ -85,10 +113,9 @@ public class Station
 	}
 
 	/**
-	 * Returns the state this station is located
-	 * Will either be NY or NJ
+	 * Returns the state (NY/NJ) this station is located
 	 * 
-	 * @return the stationState
+	 * @return stationState
 	 */
 	public String getStationState() 
 	{
@@ -96,23 +123,132 @@ public class Station
 	}
 
 	/**
-	 * Returns the geolocation of this station as a LatLng object, which holds the latitude and longitude of it
+	 * Returns the coordinates of this station as a double array
+	 * in the order of latitude and longitude
 	 * 
-	 * @return the stationLocation
+	 * @return stationLocation 
 	 */
-	public LatLng getStationLocation() 
+	public double[] getStationLocation() 
 	{
-		return stationLocation;
+		return new double[]{station_lat, station_lon};
 	}
 
 	/**
-	 * Returns all the entrances to this station as an array
+	 * Returns all the entrances to this station as an ArrayList
+	 * <p>
 	 * Should be called after all entrances are obtained from an appropriate database
 	 * 
-	 * @return the entranceList
+	 * @return entranceList
+	 * @see #setEntranceList(DatabaseHandler)
 	 */
-	public Entrance[] getEntranceList() 
+	public ArrayList<Entrance> getEntranceList() 
 	{
 		return entranceList;
+	}
+	
+	/**
+	 * Returns all the entrances to this station as an ArrayList that are handicap accessible
+	 * <p>
+	 * Should be called after all entrances are obtained from an appropriate database
+	 * 
+	 * @return handicapAccessEntrances
+	 * @see #setEntranceList(DatabaseHandler)
+	 */
+	public ArrayList<Entrance> getHandicapAccessEntrances()
+	{
+		return handicapAccessEntrances;
+	}
+
+	/**
+	 * Creates Station object from a Parcel
+	 */
+	public static final Parcelable.Creator<Station> CREATOR = new Parcelable.Creator<Station>() 
+	{
+		/**
+		 * Takes in a parcel and passes it to constructor
+		 * 
+		 * @see Station#Station(Parcel)
+		 * @see android.os.Parcelable.Creator#createFromParcel(android.os.Parcel)
+		 */
+		@Override
+		public Station createFromParcel(Parcel source) {
+			return new Station(source);
+		}
+
+		/**
+		 * Allows an array of Station objects to be parcelled
+		 * 
+		 * @see Station#Station(Parcel)
+		 * @see android.os.Parcelable.Creator#newArray(int)
+		 */
+		@Override
+		public Station[] newArray(int size) {
+			return new Station[size];
+		}
+		
+	};
+	
+	/**
+	 * Not used in Station, returns 0.
+	 * 
+	 * @see android.os.Parcelable#describeContents()
+	 */
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	/**
+	 * Writes fields to a parcel in a particular order
+	 * 
+	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
+	 */
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(stationID);
+		dest.writeString(stationName);
+		dest.writeString(stationCity);
+		dest.writeString(stationState);
+		dest.writeDouble(station_lat);
+		dest.writeDouble(station_lon);
+		dest.writeTypedList(entranceList);
+		dest.writeTypedList(handicapAccessEntrances);
+	}
+	
+	/**
+	 * Adds handicap accessible entrances at this station to handicapAccessEntrances ArrayList. Called 
+	 * after entranceList is given values to hold.
+	 */
+	private void setHandicapAccessible()
+	{
+		handicapAccessEntrances = new ArrayList<Entrance>();
+		for (int i = 0; i < entranceList.size(); i++)
+		{
+			if (entranceList.get(i).isHandicapAccessible())
+				handicapAccessEntrances.add(entranceList.get(i));
+		}
+	}
+	
+	/**
+	 * For each entrance that is handicap accessible at this station, it will check if it meets the 
+	 * option set by the user (escalator or elevator). 
+	 * 
+	 * @param access user-specified handicap access option 
+	 * @return true if an entrance meets the user's handicap access requirement else false
+	 */
+	public boolean isHandicapAccessible(String access)
+	{
+		if (access == null || access.isEmpty())
+			return false;
+		if (handicapAccessEntrances.isEmpty() || handicapAccessEntrances == null)
+			return false;
+		
+		for (int i = 0; i < handicapAccessEntrances.size(); i++)
+		{
+			if (handicapAccessEntrances.get(i).isHandicapAccessible(access))
+				return true;
+		}
+		
+		return false;
 	}
 }

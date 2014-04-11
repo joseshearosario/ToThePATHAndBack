@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,21 +34,20 @@ public class Directions {
 	public static class DownloadAllData extends AsyncTask<String[], Void, String[]> 
 	{
 		@Override
-		protected String[] doInBackground(String[]... params) {
+		protected String[] doInBackground(String[]... params) 
+		{
 			String[] tempArray = params[0];
 			String[] data = new String[tempArray.length];
 			for (int i = 0; i < tempArray.length; i++)
 			{
 				try {
 					data[i] = downloadFromURL(tempArray[i]);
-					/*Log.d("transportRoute", "transportRoute: " + MainActivity.transportMode);
-					Log.d("matrixRoute", "matrixRoute: " + MainActivity.matrixMode);
-					Log.d("downloadAllData", data[i]);*/
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
+			
 			return data;
 		}
 	}
@@ -115,8 +115,8 @@ public class Directions {
 		String str_origin = "from="+origin.latitude+","+origin.longitude;
 		String str_destination = "to="+destination.latitude+","+destination.longitude;
 		String str_unit = "unit=k";
-		String str_routeType = "routeType="+MainActivity.matrixMode;
-		String str_key = "key=" + MainActivity.APP_KEY;
+		String str_routeType = "routeType="+MainActivity.getMatrixMode();
+		String str_key = "key=" + MainActivity.getAPP_KEY();
 		
 		String parameters = str_key + "&" +
 							str_origin + "&" +
@@ -125,6 +125,25 @@ public class Directions {
 							str_routeType;
 		
 		String url = "http://open.mapquestapi.com/directions/v2/routematrix?" + parameters;
+		return url;
+	}
+	
+	public static String getDirectionsURL (LatLng origin, LatLng destination)
+	{
+		String str_origin = "from="+origin.latitude+","+origin.longitude;
+		String str_destination = "to="+destination.latitude+","+destination.longitude;
+		String str_key = "key=" + MainActivity.getAPP_KEY();
+		String str_unit = "unit=k";
+		String str_routeType = "routeType="+MainActivity.getTransportMode();
+		
+		String parameters = str_key + "&" +
+				str_origin + "&" +
+				str_destination + "&" + 
+				str_unit + "&" +
+				str_routeType;
+		
+		String url = "http://open.mapquestapi.com/directions/v2/route?" + parameters;
+		
 		return url;
 	}
 	
@@ -182,11 +201,19 @@ public class Directions {
 	 * @param stations - An array of Station objects that we'll use each as a destination for the URL
 	 * @return an array of Strings, each represents a Directions API URL from the origin to each station 
 	 */
-	public static String[] getAllURLS (LatLng origin, Station[] stations)
+	public static String[] getAllURLS (LatLng origin, ArrayList<Station> stations)
 	{
-		String[] allURLs = new String [stations.length];
-		for (int i = 0; i < stations.length; i++)
-			allURLs[i] = Directions.getRouteMatrixURL(origin, stations[i].getStationLocation());
+		String[] allURLs = new String [stations.size()];
+		for (int i = 0; i < stations.size(); i++)
+			allURLs[i] = Directions.getRouteMatrixURL(origin, new LatLng(stations.get(i).getStationLocation()[0], stations.get(i).getStationLocation()[1]));
+		return allURLs;
+	}
+
+	public static String[] getEntranceURLS(LatLng origin, ArrayList<Entrance> entranceList) 
+	{
+		String[] allURLs = new String [entranceList.size()];
+		for (int i = 0; i < entranceList.size(); i++)
+			allURLs[i] = Directions.getRouteMatrixURL(origin, new LatLng(entranceList.get(i).getEntranceLocation()[0], entranceList.get(i).getEntranceLocation()[1]));
 		return allURLs;
 	}
 }

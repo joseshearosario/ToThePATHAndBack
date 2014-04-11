@@ -41,7 +41,7 @@ public class DirectionsJSONParser {
 			for (int i = 0; i < JSONString.length; i++)
 			{
 				jObject = new JSONObject(JSONString[i]);
-				jMeasure = jObject.getJSONArray(MainActivity.distance_duration);
+				jMeasure = jObject.getJSONArray(MainActivity.getDistance_duration());
 				sortMeasures[i] = jMeasure.getDouble(1);
 			}
 		} catch (JSONException e) {
