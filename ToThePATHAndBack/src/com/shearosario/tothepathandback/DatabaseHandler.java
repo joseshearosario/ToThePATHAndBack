@@ -30,9 +30,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "pathStations";
 	// When updating database, make sure to increment/change DATABASE_VERSION
-	// Default is 1, last used was 2
-	// http://stackoverflow.com/questions/11601573/db-file-in-assets-folder-will-it-be-updated
-	private static final int DATABASE_VERSION = 2;
+	// http://stackoverflow.com/questions/116015734/db-file-in-assets-folder-will-it-be-updated
+	private static final int DATABASE_VERSION = 1;
 	private static final String KEY_DB_VER = "db_ver";
 	private SQLiteDatabase db;
 	private Context c;
@@ -97,7 +96,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		this.openDatabase();
 	}
 	
-	
 	/**
 	 * Using the database path created in the constructor, determine if database already exists on file.
 	 * 
@@ -155,7 +153,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		}
 	}
 
-	
 	/**
 	 * Create a complete path to database file in app's data folder on device and open it as 
 	 * read only. Saved in SQLiteDatabase field.  
@@ -198,7 +195,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		if (c != null)
 			c.moveToFirst();
 
-		Station s = new Station(c.getString(1),c.getString(2),c.getString(5),c.getString(6),c.getDouble(3),c.getDouble(4));
+		ArrayList<String> service_weekday = new ArrayList<String>();
+		ArrayList<String> service_weekend = new ArrayList<String>();
+		
+		if (c.getString(3) != null && c.getString(3).isEmpty() == false)
+			service_weekday.add(c.getString(3));
+		
+		if (c.getString(2) != null && c.getString(2).isEmpty() == false)
+			service_weekday.add(c.getString(2));
+		
+		if (c.getString(1) != null && c.getString(1).isEmpty() == false)
+			service_weekend.add(c.getString(1));
+		
+		if (c.getString(0) != null && c.getString(0).isEmpty() == false)
+			service_weekend.add(c.getString(0));
+		
+		Station s = new Station(c.getString(1),c.getString(2),c.getString(5),c.getString(6),c.getDouble(3),c.getDouble(4), service_weekday, service_weekend);
 		
 		return s;
 	}
@@ -212,14 +224,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	{
 		String selectQuery = "SELECT * FROM " + StationEntry.TABLE_NAME;
 		Cursor c = db.rawQuery(selectQuery, null);
-		ArrayList<Station> stationList = new ArrayList<Station>(c.getCount());		
+		ArrayList<Station> stationList = new ArrayList<Station>(/*c.getCount()*/);		
 		
 		if (c.moveToFirst())
 		{
 			int i = 0;
 			do
 			{
-				Station s = new Station(c.getString(1),c.getString(2),c.getString(5),c.getString(6),c.getDouble(3),c.getDouble(4));
+				ArrayList<String> service_weekday = new ArrayList<String>();
+				ArrayList<String> service_weekend = new ArrayList<String>();
+				
+				if (c.getString(3) != null && c.getString(3).isEmpty() == false)
+					service_weekday.add(c.getString(3));
+				
+				if (c.getString(2) != null && c.getString(2).isEmpty() == false)
+					service_weekday.add(c.getString(2));
+				
+				if (c.getString(1) != null && c.getString(1).isEmpty() == false)
+					service_weekend.add(c.getString(1));
+				
+				if (c.getString(0) != null && c.getString(0).isEmpty() == false)
+					service_weekend.add(c.getString(0));
+				
+				Station s = new Station(c.getString(5),c.getString(6),c.getString(9),c.getString(10),c.getDouble(7),c.getDouble(8), service_weekday, service_weekend);
 				stationList.add(s);
 				i++;
 			} while (c.moveToNext() && i < c.getCount());
@@ -239,7 +266,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	{
 		String selectQuery = "SELECT * FROM " + EntranceEntry.TABLE_NAME + " WHERE " + EntranceEntry.COLUMN_STATIONID + " = ?";
 		Cursor c = db.rawQuery(selectQuery, new String[] {s.getStationID()});
-		ArrayList<Entrance> entranceList = new ArrayList<Entrance>(c.getCount());
+		ArrayList<Entrance> entranceList = new ArrayList<Entrance>(/*c.getCount()*/);
 
 		if (c.moveToFirst())
 		{

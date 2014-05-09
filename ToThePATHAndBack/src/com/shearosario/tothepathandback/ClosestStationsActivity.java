@@ -1,20 +1,18 @@
 package com.shearosario.tothepathandback;
 
+import android.support.v4.app.NavUtils;
 import java.util.ArrayList;
-import java.util.List;
-
-import org.osmdroid.api.IMapController;
-import org.osmdroid.bonuspack.overlays.Marker;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.*;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,66 +26,35 @@ import android.widget.TextView;
 
 public class ClosestStationsActivity extends Activity
 {
-	public static LatLng origin;
-	public static List<ObjectSort<Station>> allStationsSort;
-		
-	// Minimum & maximum latitude so we can span it
-    // The latitude is clamped between -90 degrees and +90 degrees inclusive
-    // thus we ensure that we go beyond that number
-    private int minLatitude;
-    private int maxLatitude;
-   
-    // Minimum & maximum longitude so we can span it
-    // The longitude is clamped between -180 degrees and +180 degrees inclusive
-    // thus we ensure that we go beyond that number
-    private int minLongitude;
-    private int maxLongitude;
-	private Context context;
-	private Activity activity;
+	private static LatLng origin;		
+	private static Context context;
+	private static Activity activity;
+	private AdView adView;
 	
-	private void setupMapSpan(GeoPoint one, GeoPoint two)
+	@Override
+	protected void onResume()
 	{
-		if (one != null)
-		{
-			// Sets the minimum and maximum latitude so we can span and zoom
-            minLatitude = (minLatitude > one.getLatitudeE6()) ? one.getLatitudeE6() : minLatitude;
-            maxLatitude = (maxLatitude < one.getLatitudeE6()) ? one.getLatitudeE6() : maxLatitude;               
-           
-            // Sets the minimum and maximum latitude so we can span and zoom
-            minLongitude = (minLongitude > one.getLongitudeE6()) ? one.getLongitudeE6() : minLongitude;
-            maxLongitude = (maxLongitude < one.getLongitudeE6()) ? one.getLongitudeE6() : maxLongitude;
-		}
-		
-		if (two != null)
-		{
-			// Sets the minimum and maximum latitude so we can span and zoom
-            minLatitude = (minLatitude > two.getLatitudeE6()) ? two.getLatitudeE6() : minLatitude;
-            maxLatitude = (maxLatitude < two.getLatitudeE6()) ? two.getLatitudeE6() : maxLatitude;               
-           
-            // Sets the minimum and maximum latitude so we can span and zoom
-            minLongitude = (minLongitude > two.getLongitudeE6()) ? two.getLongitudeE6() : minLongitude;
-            maxLongitude = (maxLongitude < two.getLongitudeE6()) ? two.getLongitudeE6() : maxLongitude;
-		}
+		if (adView != null) 
+			adView.resume();
+		super.onResume();
 	}
 	
-	private GeoPoint createGeoPoint (ObjectSort<Station> station)
+	@Override
+	public void onPause() 
 	{
-		if (station == null)
-			return new GeoPoint (origin.latitude, origin.longitude);
-		else
-			return new GeoPoint (station.getObject().getStationLocation()[0], station.getObject().getStationLocation()[1]);
+	    if (adView != null)
+	      adView.pause();
+	    super.onPause();
 	}
 	
-	private void addMarker(MapView map, ObjectSort<Station> station)
+	/** Called before the activity is destroyed. */
+	@Override
+	public void onDestroy() 
 	{
-		Marker m = new Marker(map);
-		m.setPosition(createGeoPoint(station));
-		m.setIcon(getResources().getDrawable(R.drawable.ic_launcher));
-		if (station == null)
-			m.setTitle("Origin");
-		else
-			m.setTitle(station.getObject().getStationName());
-		map.getOverlays().add(m);
+		// Destroy the AdView.
+	    if (adView != null)
+	      adView.destroy();
+	    super.onDestroy();
 	}
 	
 	@Override
@@ -95,10 +62,16 @@ public class ClosestStationsActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_closest_stations);
 		
-		allStationsSort = new ArrayList<ObjectSort<Station>>();
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
 		Intent intent = getIntent();
 		context = this;
 		activity = this;
+		
+		adView = (AdView) this.findViewById(R.id.adViewClosest);
+	    AdRequest adRequest = new AdRequest.Builder().addTestDevice("949F5429A9EC251C1DD4395558D33531").build();
+		// AdRequest adRequest = new AdRequest.Builder().build();
+	    adView.loadAd(adRequest);
 		
 		if(intent.hasExtra("Manual"))
 		{
@@ -111,69 +84,69 @@ public class ClosestStationsActivity extends Activity
 			origin = new LatLng (current[0], current[1]);
 		}
 		
-		double[] closestSortMeasures = null;
-		ArrayList<Station> closestStations;
-		if(intent.hasExtra("closestSortMeasures"))
-			closestSortMeasures = intent.getDoubleArrayExtra("closestSortMeasures");
-		closestStations = intent.getParcelableArrayListExtra("closestStations");
+		double[] entranceMeasures = intent.getDoubleArrayExtra("closestSortMeasures");
+		ArrayList<Entrance> closestEntrances = intent.getParcelableArrayListExtra("closestEntrances");
 		
-		for (int i = 0; i < closestStations.size(); i++)
-		{
-			allStationsSort.add(new ObjectSort<Station>(closestStations.get(i), closestSortMeasures[i]));
-		}
-		
-		MySimpleArrayAdapter adapter = new MySimpleArrayAdapter(this, R.layout.listitem, allStationsSort);
-		/* ListAdapter adapter = createListAdapter(allStationsSortDistance); */
+		MySimpleArrayAdapter adapter = new MySimpleArrayAdapter(this, R.layout.listitem, closestEntrances, entranceMeasures);
+		//ListAdapter adapter = createListAdapter(allStationsSortDistance);
 		ListView listview = (ListView) findViewById(R.id.ClosestStationsList);
 		listview.setAdapter(adapter);
-		/*setListAdapter(adapter);*/
+		//setListAdapter(adapter);
 		
-		final MapView map = (MapView) findViewById(R.id.mapview);
-		map.setTileSource(TileSourceFactory.MAPNIK);
-		map.setBuiltInZoomControls(true);
-		map.setMultiTouchControls(true);
+		final GoogleMap gMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.mapview)).getMap();
+		gMap.setMyLocationEnabled(false);			
+		gMap.addMarker(new MarkerOptions()
+			.title("Origin")
+			.position(origin));
+		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(origin, 13));
+		gMap.setBuildingsEnabled(false);
+		gMap.getUiSettings().setZoomControlsEnabled(false);
 		
-		final GeoPoint startPoint = createGeoPoint(null);
-		final IMapController mapController = map.getController();
-		mapController.setZoom(13);
-		mapController.setCenter(startPoint);
-		addMarker(map, null);
+		TextView textView = (TextView) findViewById(R.id.osm_directions);
+		textView.setText(Html.fromHtml(
+	            "Data provided by © OpenStreetMap contributors " +
+	            "<a href=\"http://www.openstreetmap.org/copyright\">License</a>"));
+		textView.setMovementMethod(LinkMovementMethod.getInstance());
 		
-		map.invalidate();
-		
+		textView = (TextView) findViewById(R.id.directions_text);
+		textView.setText(Html.fromHtml(
+	            "Directions, Nominatim Search Courtesy of " +
+	            "<a href=\"http://www.mapquest.com\">MapQuest</a>"));
+		textView.setMovementMethod(LinkMovementMethod.getInstance());
+
 		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() 
 		{
 		      @Override
 		      public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
-		      {
-		    	  minLatitude = (int)(+91 * 1E6);
-		    	  maxLatitude = (int)(-91 * 1E6);
-		    	  minLongitude  = (int)(+181 * 1E6);
-		    	  maxLongitude  = (int)(-181 * 1E6);
-		    	    
-		    	  final ObjectSort<Station> item = (ObjectSort<Station>) parent.getItemAtPosition(position);
-		    	  map.getOverlays().clear();
-		    	  		    	  
-		    	  setupMapSpan(createGeoPoint(item), createGeoPoint(null));
-		    	  mapController.zoomToSpan((maxLatitude - minLatitude), (maxLongitude - minLongitude));
-		    	  mapController.animateTo(new GeoPoint((maxLatitude + minLatitude)/2,(maxLongitude + minLongitude)/2));
+		      {		    	    
+		    	  final Entrance item = (Entrance) parent.getItemAtPosition(position);
 		    	  
-		    	  addMarker(map, null);
-		    	  addMarker(map, item);
+		    	  gMap.clear();
 		    	  
-		    	  map.invalidate();
+		    	  LatLngBounds bounds = new LatLngBounds.Builder()
+		    	  			.include(origin)
+		    	  			.include(new LatLng (item.getEntranceLocation()[0], item.getEntranceLocation()[1]))
+		    	  			.build();
+		    	  
+		    	  gMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
+		    	  
+		    	  gMap.addMarker(new MarkerOptions()
+					.title("Origin")
+					.position(origin));
+		    	  
+		    	  gMap.addMarker(new MarkerOptions()
+					.title(item.getStationName())
+					.position(new LatLng(item.getEntranceLocation()[0], item.getEntranceLocation()[1])));
 		    	  
 		    	  Button button = (Button) findViewById(R.id.button_destination);
 		    	  button.setEnabled(true);
-		    	  button.setText("Select " + item.getObject().getStationName());
+		    	  button.setText("Select " + item.getStationName());
 		    	
 		    	  button.setOnClickListener(new View.OnClickListener() 
 		    	  {
 		              public void onClick(View v) 
 		              {
-		            	  // Toast.makeText(getApplicationContext(), item.getStation().getStationName() + " selected", Toast.LENGTH_SHORT).show();
-		            	  Log.d("item", "item: " + item.getObject().getStationLocation()[0] + "," + item.getObject().getStationLocation()[1]);
-		            	  new DisplayDirectionsIntent(context, activity, origin, item.getObject());
+		            	  new DisplayDirectionsIntent(context, activity, origin, item);
 		              }
 		          });
 		      }
@@ -204,16 +177,18 @@ public class ClosestStationsActivity extends Activity
 	    return new SimpleAdapter(this, list, android.R.layout.simple_list_item_2, from, to);
 	}*/
 	
-	private class MySimpleArrayAdapter extends ArrayAdapter<ObjectSort<Station>>
+	private class MySimpleArrayAdapter extends ArrayAdapter<Entrance>
 	{
 		private final Context context;
-		private final List<ObjectSort<Station>> stationSortList;
+		private final ArrayList<Entrance> entranceSortList;
+		private final double[] measures;
 		
-		public MySimpleArrayAdapter(Context context, int resource, List<ObjectSort<Station>> objects) 
+		public MySimpleArrayAdapter(Context context, int resource, ArrayList<Entrance> closestEntrances, double[] entranceMeasures) 
 		{
-			super(context, resource, objects);
+			super(context, resource, closestEntrances);
 			this.context = context;
-			stationSortList = objects;
+			entranceSortList = closestEntrances;
+			measures = entranceMeasures;
 		}
 		
 		@Override
@@ -228,24 +203,21 @@ public class ClosestStationsActivity extends Activity
 			TextView stationName = (TextView) convertView.findViewById(R.id.stationName);
 			TextView sortMeasure = (TextView) convertView.findViewById(R.id.sortMeasure); 
 			
-			ObjectSort<Station> sS = stationSortList.get(position);
-			
-			stationName.setText(sS.getObject().getStationName());
-			
-			if (MainActivity.getDistance_duration().compareToIgnoreCase("distance") == 0)
-				sortMeasure.setText("About " + Double.toString(sS.getSortMeasure()) + " km");
+			Entrance e = entranceSortList.get(position);
+			double m = measures[position];
+			stationName.setText(e.getStationName());
+						
+			if (ClosestStationFragment.getDistance_duration().compareToIgnoreCase("distance") == 0)
+				sortMeasure.setText("About " + Double.toString(m) + " km");
 			else
 			{
-				if ((int) sS.getSortMeasure() == 60)
+				if ((int) m == 60)
 					sortMeasure.setText("About a minute");
-				else if (sS.getSortMeasure() > 60)
-					sortMeasure.setText("About " + Integer.toString(((int) sS.getSortMeasure())/60) + " minutes");
+				else if (m > 60)
+					sortMeasure.setText("About " + Integer.toString(((int) m)/60) + " minutes");
 				else
-					sortMeasure.setText("About " + Integer.toString((int) sS.getSortMeasure()) + " seconds");
+					sortMeasure.setText("About " + Integer.toString((int) m) + " seconds");
 			}
-			
-			// if sort measure is -1, then disable the lsitview all together. Inform the user via toast notification that 
-			// the directions were not obtainable for some unknown reason.
 			
 			return convertView;
 		}
@@ -253,29 +225,26 @@ public class ClosestStationsActivity extends Activity
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.closest_stations, menu);
 		return true;
 	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
 	
 	@Override
-	public void onBackPressed() {
-		// have to make sure not to create an infinite loop
-	    // startActivity(new Intent(this, MainActivity.class));
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    // Respond to the action bar's Up/Home button
+	    // navigate up to parent activity (MainActivity)
+	    case android.R.id.home:
+	        NavUtils.navigateUpFromSameTask(this);
+	        return true;
+	    }
+	    return super.onOptionsItemSelected(item);
 	}
-
-
+	
+	// navigate back to MainActivity
+	@Override
+	public void onBackPressed() {
+        NavUtils.navigateUpFromSameTask(this);
+	}
 }

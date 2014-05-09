@@ -27,6 +27,8 @@ public class Station implements Parcelable
 	private double station_lat, station_lon;
 	private ArrayList<Entrance> entranceList;
 	private ArrayList<Entrance> handicapAccessEntrances;
+	private ArrayList<String> weekdayService;
+	private ArrayList<String> weekendService;
 	
 	/**
 	 * Constructor for Station
@@ -37,8 +39,11 @@ public class Station implements Parcelable
 	 * @param state state where the station is located
 	 * @param lat latitude of the station
 	 * @param lon longitude of the station
+	 * @param service_weekend the service at this station during weekends/nights 
+	 * @param service_weekday the service at this station during weekdays
 	 */
-	public Station (String id, String name, String city, String state, double lat, double lon)
+	public Station (String id, String name, String city, String state, double lat, double lon, 
+			ArrayList<String> service_weekday, ArrayList<String> service_weekend)
 	{
 		stationID = id;
 		stationName = name;
@@ -46,6 +51,8 @@ public class Station implements Parcelable
 		stationState = state;
 		station_lat = lat;
 		station_lon = lon;
+		weekdayService = service_weekday;
+		weekendService = service_weekend;
 	}
 	
 	/**
@@ -63,10 +70,16 @@ public class Station implements Parcelable
 		this.stationState = source.readString();
 		this.station_lat = source.readDouble();
 		this.station_lon = source.readDouble();
+		
 		this.entranceList = new ArrayList<Entrance>();
 		source.readTypedList(entranceList, Entrance.CREATOR);
 		this.handicapAccessEntrances = new ArrayList<Entrance>();
 		source.readTypedList(handicapAccessEntrances, Entrance.CREATOR);
+		
+		this.weekdayService = new ArrayList<String>();
+		source.readStringList(weekdayService);
+		this.weekendService = new ArrayList<String>();
+		source.readStringList(weekendService);
 	}
 
 	/**
@@ -160,6 +173,20 @@ public class Station implements Parcelable
 	}
 
 	/**
+	 * @return the weekdayService
+	 */
+	public ArrayList<String> getWeekdayService() {
+		return weekdayService;
+	}
+
+	/**
+	 * @return the weekendService
+	 */
+	public ArrayList<String> getWeekendService() {
+		return weekendService;
+	}
+
+	/**
 	 * Creates Station object from a Parcel
 	 */
 	public static final Parcelable.Creator<Station> CREATOR = new Parcelable.Creator<Station>() 
@@ -213,6 +240,8 @@ public class Station implements Parcelable
 		dest.writeDouble(station_lon);
 		dest.writeTypedList(entranceList);
 		dest.writeTypedList(handicapAccessEntrances);
+		dest.writeStringList(weekdayService);
+		dest.writeStringList(weekendService);
 	}
 	
 	/**

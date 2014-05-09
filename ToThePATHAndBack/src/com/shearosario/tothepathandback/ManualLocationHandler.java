@@ -29,6 +29,8 @@ public class ManualLocationHandler
 	private static Context context;
 	private static Activity activity;
 	private static String manualLocation;
+	private static String state; 
+	private static String county;
 	
 	/**
 	 * A private class that is instantiated in geocode, and it is used to download 
@@ -74,7 +76,7 @@ public class ManualLocationHandler
 		double[] latlng = new double[2];
 		String tempJSON = null;
 		String tempManualLocation = URLEncoder.encode(manualLocation, "UTF-8");
-		String geocodeURL = "http://open.mapquestapi.com/nominatim/v1/search.php?format=json&q="+tempManualLocation;
+		String geocodeURL = "http://open.mapquestapi.com/nominatim/v1/search.php?format=json&q="+tempManualLocation+"&limit=1&addressdetails=1";
 		
 		downloadGeocode geocodeData = new downloadGeocode();
 		geocodeData.execute(geocodeURL);
@@ -87,7 +89,7 @@ public class ManualLocationHandler
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+				
 		try {
 			JSONArray jArray = new JSONArray(tempJSON);
 						
@@ -107,6 +109,8 @@ public class ManualLocationHandler
 					 */
 					latlng[0] = ((JSONObject) jArray.get(i)).getDouble("lat");
 					latlng[1] = ((JSONObject) jArray.get(i)).getDouble("lon");
+					state = ((JSONObject) jArray.get(i)).getJSONObject("address").getString("state");
+					county = ((JSONObject) jArray.get(i)).getJSONObject("address").getString("county");
 				}
 			}
 			
@@ -134,15 +138,17 @@ public class ManualLocationHandler
 		context = c;
 		activity = a;
 		manualLocation = manual;
+		state = null;
+		county = null;
 		double[] latlng = null;
-		
+				
 		try {
 			latlng = geocode();
 		} catch (UnsupportedEncodingException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}		
-					
+							
 		/*
 		 * If no latitude and longitude is returned, which means that the location the user inputted is invalid for OpenStreetMap and nothing was downloaded, 
 		 * then alert the user that the location is bad and to try again. Else, ClosestStationsIntent is called and the intent for the next activity is created.
@@ -151,8 +157,7 @@ public class ManualLocationHandler
 		{
 			new AlertDialog.Builder(context)
 			.setTitle("Typed Location Does Not Exist")
-			.setMessage("The locatoin you manually entered could not be found on OpenStreetMap. It may need to be more or less specific. " +
-							"You'll need to try another entry, or use your current location.")
+			.setMessage("The location you entered could not be found. You may need to be more or less specific.")
 			.setPositiveButton("Okay", new DialogInterface.OnClickListener()
 			{
 				@Override
@@ -162,10 +167,10 @@ public class ManualLocationHandler
 					text.setText("");
 					dialog.cancel();
 				}
-			}).show();
+			}).setCancelable(false).show();
 		}
 		
 		else
-			new ClosestStationsIntent(latlng, context, activity);
+			new ClosestStationsIntent(latlng, context, activity, state, county);
 	}
 }

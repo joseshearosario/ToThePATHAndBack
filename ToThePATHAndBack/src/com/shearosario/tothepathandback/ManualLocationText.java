@@ -30,7 +30,7 @@ public class ManualLocationText {
 	public ManualLocationText (Context c, Activity a)
 	{
 		context = c;
-		activity = a; 
+		activity = a;
 		
 		textManual = (EditText) activity.findViewById(R.id.origin_manual);
 		textManual.setOnEditorActionListener(new OnEditorActionListener() 

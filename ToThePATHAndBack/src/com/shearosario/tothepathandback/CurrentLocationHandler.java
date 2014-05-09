@@ -1,5 +1,10 @@
 package com.shearosario.tothepathandback;
 
+import java.util.concurrent.ExecutionException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.location.Location;
 import android.app.AlertDialog;
 import android.app.Activity;
@@ -8,8 +13,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.provider.Settings;
 
@@ -32,17 +39,74 @@ public class CurrentLocationHandler {
 	private static Context context;
 	private static final int TWO_MINUTES = 1000*60*2;
 	private static LocationManager locationManager;
-	private static Location currentLocation = null;
+	private static Location currentLocation;
 
 	/**
-	 * When a location is obtained and stored as the current location of the user, the location button in the main 
-	 * activity is activated. If the user wishes to use their current location and click on that button, this is called. 
-	 * It will pass the current location, context, and activity, to be used to create an intent and start the ClosestStations activity. 
+	 * When a location is obtained and stored as the current location of the
+	 * user, the location button in the main activity is activated. If the user
+	 * wishes to use their current location and click on that button, this is
+	 * called. First we determine the state of the current location, in order to
+	 * draw down the number of stations we'd have to checked. Calls on
+	 * downloadReverseGeoCode class to obtain the state where the origin is at.
+	 * It will pass the current location, context, the state, and activity, to
+	 * be used to create an intent and start the ClosestStations activity.
 	 * Although, all of that is handled by ClosestStationsIntent.
 	 */
 	public static void createClosestStationsIntent() 
 	{		
-		new ClosestStationsIntent(new double[]{currentLocation.getLatitude(), currentLocation.getLongitude()}, context, activity);
+		String tempJSON = null;
+		String originState = null;
+		String originCounty = null;
+		String url = "http://open.mapquestapi.com/nominatim/v1/reverse.php?format=json&lat=" + 
+				currentLocation.getLatitude() + "&lon=" + currentLocation.getLongitude();
+				
+		downloadReverseGeoCode dataAsync = new downloadReverseGeoCode();
+		dataAsync.execute(url);
+		try {
+			tempJSON = dataAsync.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			JSONObject jObject = new JSONObject(tempJSON);
+			JSONObject jAddress = jObject.getJSONObject("address");
+			originState = jAddress.getString("state");
+			originCounty = jAddress.getString("county");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		new ClosestStationsIntent(new double[]{currentLocation.getLatitude(), currentLocation.getLongitude()}, context, activity, originState, originCounty);
+	}
+	
+	/**
+	 * To download the state of the origin
+	 * 
+	 * @author shea
+	 *
+	 */
+	private static class downloadReverseGeoCode extends AsyncTask<String, Void, String> 
+	{
+		@Override
+		protected String doInBackground(String... params) {
+			String tempURL = params[0];
+			String data = null;
+						
+			try {
+				data = Directions.downloadFromURL(tempURL);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+									
+			return data;
+		}
 	}
 
 	/**
@@ -100,6 +164,7 @@ public class CurrentLocationHandler {
 
 		}
 	};
+	private static View view;
 
 
 	/**
@@ -108,10 +173,14 @@ public class CurrentLocationHandler {
 	 * 
 	 * @param c the context of the main activity
 	 * @param a the main activity
+	 * @param rootView 
 	 */
-	public CurrentLocationHandler(Context c, Activity a) {
+	public CurrentLocationHandler(Context c, Activity a, View rootView) {
 		context = c;
 		activity = a;
+		currentLocation = null;
+		locationManager = null;
+		view = rootView;
 		getLocation();
 	}
 
@@ -140,8 +209,7 @@ public class CurrentLocationHandler {
 			{
 				new AlertDialog.Builder(context)
 				.setTitle("No Location Provider Enabled")
-				.setMessage("You currently do not have GPS and mobile network location provider turned on. You can choose to enter a " +
-				"manual location, or turn on GPS or your mobile network location provider.")
+				.setMessage("You currently do not have GPS and mobile network location provider turned on.")
 				.setPositiveButton("Turn on GPS/Network", new DialogInterface.OnClickListener()
 				{
 					@Override
@@ -156,11 +224,10 @@ public class CurrentLocationHandler {
 				{
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						Button originCurrentView = (Button) activity.findViewById(R.id.origin_current);
+						Button originCurrentView = (Button) view.findViewById(R.id.origin_current);
 						originCurrentView.setText("Location not availble");
 					}
-				})
-				.show();
+				}).setCancelable(false).show();
 			}
 			/* We're able to get the current location from some source. */
 			else 
@@ -177,8 +244,9 @@ public class CurrentLocationHandler {
 				if (lastGPS != null && lastNetwork != null)
 				{
 					Location tempLocation = isBetterLastKnownLocation(lastGPS, lastNetwork);
+
 					boolean isTempNull = (tempLocation == null);
-					if (!isTempNull)
+					if (isTempNull == false)
 					{
 						if (tempLocation.getProvider().compareToIgnoreCase("gps") == 0)
 							setCurrentLocation(tempLocation, 0);
@@ -207,11 +275,15 @@ public class CurrentLocationHandler {
 				 * We'll activate the listeners, even if we can use the last
 				 * known location. It's quite possible that we can still call
 				 * the listeners with currentLocation null.
-				 */
+				 */				
 				if (isGPSEnabled && currentLocation == null)			
+				{
 					locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, gpsListener);
+				}
 				if (isNetworkEnabled && currentLocation == null)
+				{
 					locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, networkListener);
+				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -229,12 +301,12 @@ public class CurrentLocationHandler {
 	 * @return The location that best meets the standards of "good enough". If neither, then null.
 	 */
 	private Location isBetterLastKnownLocation (Location lG, Location lN)
-	{
+	{ 
 		long gpsTimeDelta = System.currentTimeMillis() - lG.getTime();
 		long networkTimeDelta = System.currentTimeMillis() - lN.getTime();
 	    boolean gpsNew = ((gpsTimeDelta > 0) && (gpsTimeDelta < TWO_MINUTES));
 	    boolean networkNew = ((networkTimeDelta > 0) && (networkTimeDelta < TWO_MINUTES));
-		
+	    
 	    /* if gps or network location is within two minutes */
 	    if (gpsNew || networkNew)
 	    {	    
@@ -338,7 +410,7 @@ public class CurrentLocationHandler {
 				{"Use your last known (GPS) location", "Use your last nown (Network) location",
 				"Use your current (GPS) location", "Use your current (Network) location"};		
 		CurrentLocationHandler.currentLocation = new Location (currentLocation);
-		Button originCurrentView = (Button) activity.findViewById(R.id.origin_current);
+		Button originCurrentView = (Button) view.findViewById(R.id.origin_current);
 		originCurrentView.setText(currentLocationText[text]);
 		originCurrentView.setEnabled(true);
 	}

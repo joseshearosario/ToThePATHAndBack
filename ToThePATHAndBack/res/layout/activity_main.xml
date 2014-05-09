@@ -1,15 +1,30 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/mainActivityLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity" >
-
-    <EditText
+    tools:context=".MainActivity">
+    
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adViewMain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-9361531063880663/2204421836" >
+    </com.google.android.gms.ads.AdView>
+    
+	<android.support.v4.view.ViewPager
+	    android:id="@+id/pager_main"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" >
+	</android.support.v4.view.ViewPager>    
+    
+    <!-- <EditText
+		android:paddingTop="@dimen/activity_vertical_margin"
         android:id="@+id/origin_manual"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,7 +48,7 @@
         android:layout_height="wrap_content"
         android:enabled="false"
         android:hint="@string/origin_current"
-        android:onClick="setOriginCurrent" />
+        android:onClick="setOriginCurrent" /> 
 
     <TextView
         android:id="@+id/text_TransportMode"
@@ -41,48 +56,11 @@
         android:layout_height="wrap_content"
         android:hint="@string/text_TransportMode"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <RadioGroup
-        android:id="@+id/radioGroup_TransportMode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <RadioButton
-            android:id="@+id/radio_Quickest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:hint="@string/radio_Quickest"
-            android:onClick="onRadioButtonClicked" />
-
-        <RadioButton
-            android:id="@+id/radio_Shortest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/radio_Shortest"
-            android:onClick="onRadioButtonClicked" />
-
-        <RadioButton
-            android:id="@+id/radio_Walking"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/radio_Walking"
-            android:onClick="onRadioButtonClicked" />
-
-        <RadioButton
-            android:id="@+id/radio_PublicTransit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/radio_PublicTransit"
-            android:onClick="onRadioButtonClicked" />
-
-        <RadioButton
-            android:id="@+id/radio_Bicycle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/radio_Bicycle"
-            android:onClick="onRadioButtonClicked" />
-    </RadioGroup>
+    
+    <Spinner
+        android:id="@+id/spinner_TransportMode"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/text_DistanceDuration"
@@ -90,27 +68,11 @@
         android:layout_height="wrap_content"
         android:hint="@string/text_DistanceDuration"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <RadioGroup
-        android:id="@+id/radioGroup_DistanceDuration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <RadioButton
-            android:id="@+id/radio_Distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:hint="@string/radio_Distance"
-            android:onClick="onRadioButtonClicked" />
-
-        <RadioButton
-            android:id="@+id/radio_Duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/radio_Duration"
-            android:onClick="onRadioButtonClicked" />
-    </RadioGroup>
+    
+    <Spinner
+        android:id="@+id/spinner_DistanceDuration"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/text_HandicapAccess"
@@ -118,26 +80,10 @@
         android:layout_height="wrap_content"
         android:hint="@string/text_HandicapAccess"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <RadioGroup
-        android:id="@+id/radioGroup_HandicapAccess"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <RadioButton
-            android:id="@+id/radio_Escalator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/radio_Escalator"
-            android:onClick="onRadioButtonClicked" />
-
-        <RadioButton
-            android:id="@+id/radio_Elevator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/radio_Elevator"
-            android:onClick="onRadioButtonClicked" />
-
-    </RadioGroup>
+    
+    <Spinner
+        android:id="@+id/spinner_HandicapAccess"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" /> -->
 
 </LinearLayout>

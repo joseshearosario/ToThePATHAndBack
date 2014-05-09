@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_closest_station"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+   	android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical" >
+    
+    <EditText
+        android:id="@+id/origin_manual"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/origin_manual"
+        android:imeOptions="actionSearch"
+        android:inputType="text" />
+     
+    <TextView
+        android:id="@+id/text_or"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/text_or"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <Button
+        android:id="@+id/origin_current"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:hint="@string/origin_current" />
+       
+    <!-- android:onClick="setOriginCurrent"
+        		android:onClick="setOriginText" --> 
+    
+    <TextView
+        android:id="@+id/text_TransportMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/text_TransportMode"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+    <Spinner
+        android:id="@+id/spinner_TransportMode"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+		android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/text_DistanceDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/text_DistanceDuration"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+    <Spinner
+        android:id="@+id/spinner_DistanceDuration"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/text_HandicapAccess"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/text_HandicapAccess"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+    <Spinner
+        android:id="@+id/spinner_HandicapAccess"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#000000" />
+ 
+</LinearLayout>
