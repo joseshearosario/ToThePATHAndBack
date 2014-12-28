@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name" translatable="false">To The PATH And Back</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_donate">Donate</string>
+    <string name="action_exit">Exit</string>
+    <string name="origin_manual">Type starting point&#8230;</string>
+    <string name="origin_current">Getting your current location&#8230;</string>
+    <string name="text_TransportMode">How To Get There?</string>
+    <string name="text_DistanceDuration">What Matters Most?</string>
+    <string name="text_or">- Or -</string>
+    <string name="title_activity_closest_stations">Your Closest Stations</string>
+    <string name="button_destination">Select a station above&#8230;</string>
+    <string name="title_activity_display_directions">Directions</string>
+    <string name="title_activity_system_schedules">Schedules</string>
+    <string name="text_HandicapAccess">Handicap Access?</string>
+    <string name="string_previousStep">Back</string>
+    <string name="string_nextStep">Next</string>
+    <string name="string_weekdays">M-F 6AM-11PM</string>
+    <string name="string_nightsweekends">Other times</string>
+    <string name="string_current">Current</string>
+	<string name="text_SelectStation">Know Where You\'re Going?</string>
+	<string name="text_StartPATHAlerts">Press here to get latest PATHAlerts</string>
+	<string name="text_departingStation">Departing Station:</string>
+    <string name="text_arrivingStation">Arriving Station (Optional):</string>
+    <string name="text_scheduleDate">Date:</string>
+    <string name="text_SystemSchedulesActivity">Get schedule</string>
+	
+    <string-array name="transport_array">
+        <item>Quickest (Driving)</item>
+        <item>Shortest (Driving)</item>
+        <item>Walking</item>
+        <item>Public Transit</item>
+        <item>Bicycle</item>
+    </string-array>
+    
+    <string-array name="sort_array">
+        <item>Distance</item>
+        <item>Duration</item>
+    </string-array>
+    
+    <string-array name="handicap_array">
+        <item>None</item>
+        <item>Escalator</item>
+        <item>Elevator</item>
+    </string-array>
+    
+<!--     <string-array name="stations_array"> -->
+<!--         <item>No, Not Yet</item> -->
+<!--         <item>Newark</item> -->
+<!--         <item>Harrison</item> -->
+<!--         <item>Journal Square</item> -->
+<!--         <item>Grove Street</item> -->
+<!--         <item>Exchange Place</item> -->
+<!--         <item>Newport</item> -->
+<!--         <item>Hoboken</item> -->
+<!--         <item>World Trade Center</item> -->
+<!--         <item>Christopher Street</item> -->
+<!--         <item>9th Street</item> -->
+<!--         <item>14th Street</item> -->
+<!--         <item>23rd Street</item> -->
+<!--         <item>33rd Street</item> -->
+<!--     </string-array> -->
+    
+</resources>

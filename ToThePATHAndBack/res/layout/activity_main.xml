@@ -1,0 +1,26 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/mainActivityLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+    
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adViewMain"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-9361531063880663/2204421836" >
+    </com.google.android.gms.ads.AdView>
+    
+	<android.support.v4.view.ViewPager
+	    android:id="@+id/pager_main"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" >
+	</android.support.v4.view.ViewPager>    
+
+</LinearLayout>

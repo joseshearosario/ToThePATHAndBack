@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_system_map"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+     
+    <fragment
+        android:id="@+id/systemMap"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />     
+        
+    <RelativeLayout
+        android:id="@+id/systemMapButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:layout_alignParentTop="true">
+
+        <Button
+            android:id="@+id/button_currentMap"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+           	android:layout_toLeftOf="@+id/button_otherMap"
+            android:text="@string/string_current" />
+
+        <Button
+            android:id="@+id/button_otherMap"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="true" />
+    </RelativeLayout>
+ 
+    <!-- <Button
+            android:id="@+id/button_zoomToMap"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/string_zoomToMap" /> -->
+</RelativeLayout>

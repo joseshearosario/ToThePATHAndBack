@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_system_schedules"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin" >
+    
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/SelectStationsAndDates"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/select_departingStation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/text_departingStation"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <Spinner
+                android:id="@+id/spinner_scheduleDepartingStations"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#000000" />
+
+            <!--<TextView
+                android:id="@+id/select_arrivingStation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/text_arrivingStation"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <Spinner
+                android:id="@+id/spinner_scheduleArrivingStations"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#000000" /> -->
+
+            <TextView
+                android:id="@+id/select_scheduleDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/text_scheduleDate"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <Spinner
+                android:id="@+id/spinner_scheduleDates"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#000000" />
+        </LinearLayout>
+    </ScrollView>
+    
+    <LinearLayout
+        android:id="@+id/Modified_Schedules_Notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin" >
+
+        <TextView
+            android:id="@+id/Modified_Schedules_Notice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Service on all four lines operates on a 10-minute schedule on:"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/Modified_Schedules_Days"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="\tNew Year’s Day\n\tColumbus Day\n\tVeterans Day\n\tDay after Thanksgiving"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+    </LinearLayout>
+    
+    <Button
+        android:id="@+id/start_SystemSchedulesActivity"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/text_SystemSchedulesActivity"
+        android:enabled="true"
+        android:textColorHint="@android:color/black" />
+
+</LinearLayout>

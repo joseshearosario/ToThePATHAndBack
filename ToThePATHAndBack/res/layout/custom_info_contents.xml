@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" 
+    android:gravity="center" >
+    
+    <TextView
+            android:id="@+id/info_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"/>
+    
+    <TextView
+            android:id="@+id/route_service1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    
+    <TextView
+            android:id="@+id/stoptime_service1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    
+    <TextView
+            android:id="@+id/route_service2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    
+    <TextView
+            android:id="@+id/stoptime_service2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    
+    <TextView
+            android:id="@+id/route_service3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    
+    <TextView
+            android:id="@+id/stoptime_service3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    
+</LinearLayout>
